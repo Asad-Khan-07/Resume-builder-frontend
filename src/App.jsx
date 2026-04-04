@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Builder from './pages/Builder'
+import Landing from './pages/Landing'
 
 // Protected route wrapper
 const PrivateRoute = ({ children }) => {
@@ -15,11 +16,12 @@ const PrivateRoute = ({ children }) => {
 
 const AppRoutes = () => (
   <Routes>
+    <Route path="/" element={<Landing />} />
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
-    <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+    <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
     <Route path="/builder/:id" element={<PrivateRoute><Builder /></PrivateRoute>} />
-    <Route path="*" element={<Navigate to="/" />} />
+    <Route path="*" element={<Navigate to="/home" />} />
   </Routes>
 )
 
