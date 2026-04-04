@@ -53,3 +53,8 @@
     @apply text-base font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-100;
   }
 }
+
+
+html{
+  scroll-behavior: smooth;
+}
