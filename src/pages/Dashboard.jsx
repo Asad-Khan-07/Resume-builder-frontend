@@ -4,13 +4,38 @@ import Navbar from '../components/Navbar/Navbar'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
 
+const FileIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="16" y1="13" x2="8" y2="13"/>
+    <line x1="16" y1="17" x2="8" y2="17"/>
+    <polyline points="10 9 9 9 8 9"/>
+  </svg>
+)
+
+const EditIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+  </svg>
+)
+
+const EmptyIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="16" y1="13" x2="8" y2="13"/>
+    <line x1="16" y1="17" x2="8" y2="17"/>
+  </svg>
+)
+
 export default function Dashboard() {
   const [resumes, setResumes] = useState([])
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
   const navigate = useNavigate()
 
-  // Fetch all resumes
   const fetchResumes = async () => {
     try {
       const res = await api.get('/resumes')
@@ -26,7 +51,6 @@ export default function Dashboard() {
     fetchResumes()
   }, [])
 
-  // Create new resume and go to builder
   const createNewResume = async () => {
     setCreating(true)
     try {
@@ -40,7 +64,6 @@ export default function Dashboard() {
     }
   }
 
-  // Delete resume
   const deleteResume = async (id, e) => {
     e.stopPropagation()
     if (!window.confirm('Delete this resume?')) return
@@ -96,7 +119,9 @@ export default function Dashboard() {
         {/* Empty state */}
         {!loading && resumes.length === 0 && (
           <div className="card text-center py-16">
-            <div className="text-5xl mb-4">📄</div>
+            <div className="flex justify-center mb-4 text-gray-300">
+              <EmptyIcon />
+            </div>
             <h3 className="font-display text-lg font-semibold text-gray-700 mb-2">No resumes yet</h3>
             <p className="text-gray-400 text-sm mb-6">Create your first resume and land your dream job!</p>
             <button onClick={createNewResume} className="btn-primary mx-auto">
@@ -115,8 +140,8 @@ export default function Dashboard() {
                 className="card cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
               >
                 {/* Resume icon */}
-                <div className="w-10 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary-100 transition-colors">
-                  <span className="text-xl">📝</span>
+                <div className="w-10 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary-100 transition-colors text-primary-400">
+                  <EditIcon />
                 </div>
 
                 <h3 className="font-semibold text-gray-800 truncate mb-1">{resume.title}</h3>
