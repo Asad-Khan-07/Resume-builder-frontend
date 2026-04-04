@@ -7,9 +7,9 @@ import api from '../utils/api'
 import toast from 'react-hot-toast'
 
 const TEMPLATES = [
-  { key: 'modern', label: 'Modern', color: 'bg-blue-500' },
-  { key: 'classic', label: 'Classic', color: 'bg-amber-500' },
-  { key: 'minimal', label: 'Minimal', color: 'bg-gray-500' },
+  { key: 'modern', label: 'Modern' },
+  { key: 'classic', label: 'Classic' },
+  { key: 'minimal', label: 'Minimal' },
 ]
 
 const defaultData = {
@@ -22,6 +22,28 @@ const defaultData = {
   projects: [],
 }
 
+const SaveIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+    <polyline points="17 21 17 13 7 13 7 21"/>
+    <polyline points="7 3 7 8 15 8"/>
+  </svg>
+)
+
+const DownloadIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <polyline points="7 10 12 15 17 10"/>
+    <line x1="12" y1="15" x2="12" y2="3"/>
+  </svg>
+)
+
+const BackIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+)
+
 export default function Builder() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -32,7 +54,6 @@ export default function Builder() {
   const saveTimer = useRef(null)
   const previewRef = useRef()
 
-  // Load resume from server
   useEffect(() => {
     const fetchResume = async () => {
       try {
@@ -48,7 +69,6 @@ export default function Builder() {
     fetchResume()
   }, [id])
 
-  // Auto-save after 1.5 seconds of no typing
   const autoSave = useCallback(async (data) => {
     clearTimeout(saveTimer.current)
     saveTimer.current = setTimeout(async () => {
@@ -57,7 +77,7 @@ export default function Builder() {
         await api.put(`/resumes/${id}`, data)
         setLastSaved(new Date())
       } catch (err) {
-        // Silent fail for auto-save
+        // silent fail
       } finally {
         setSaving(false)
       }
@@ -81,7 +101,6 @@ export default function Builder() {
     autoSave(updated)
   }
 
-  // Manual save
   const handleSave = async () => {
     setSaving(true)
     try {
@@ -95,7 +114,6 @@ export default function Builder() {
     }
   }
 
-  // Download as PDF using browser print
   const handleDownload = () => {
     window.print()
     toast.success('Print / Save as PDF dialog opened!')
@@ -122,6 +140,17 @@ export default function Builder() {
       {/* Builder toolbar */}
       <div className="bg-white border-b border-gray-100 px-6 py-3 flex items-center gap-4 flex-wrap print:hidden">
 
+        {/* Back to dashboard */}
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+        >
+          <BackIcon />
+          Dashboard
+        </button>
+
+        <span className="text-gray-200">|</span>
+
         {/* Resume title */}
         <input
           value={resumeData.title}
@@ -147,22 +176,35 @@ export default function Builder() {
           ))}
         </div>
 
-        {/* Spacer */}
         <div className="flex-1" />
 
         {/* Save status */}
         {lastSaved && (
           <span className="text-xs text-gray-400">Saved at {formatTime(lastSaved)}</span>
         )}
-        {saving && <span className="text-xs text-gray-400 animate-pulse">Saving...</span>}
+        {saving && (
+          <span className="text-xs text-gray-400 animate-pulse">Saving...</span>
+        )}
 
-        {/* Actions */}
-        <button onClick={handleSave} disabled={saving} className="btn-secondary text-sm py-2">
+        {/* Save button */}
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="btn-secondary text-sm py-2 flex items-center gap-1.5"
+        >
+          <SaveIcon />
           Save
         </button>
-        <button onClick={handleDownload} className="btn-primary text-sm py-2 flex items-center gap-1.5">
-          ↓ Download PDF
+
+        {/* Download PDF button */}
+        <button
+          onClick={handleDownload}
+          className="btn-primary text-sm py-2 flex items-center gap-1.5"
+        >
+          <DownloadIcon />
+          Download PDF
         </button>
+
       </div>
 
       {/* Main editor area */}
@@ -181,19 +223,12 @@ export default function Builder() {
           <div className="sticky top-0 bg-gray-50 pb-2 z-10 print:hidden">
             <p className="text-xs text-gray-400 text-center">Live Preview</p>
           </div>
-          <ResumePreview data={resumeData} template={resumeData.template} />
+          <div id="resume-preview-print">
+            <ResumePreview data={resumeData} template={resumeData.template} />
+          </div>
         </div>
 
       </div>
-
-      {/* Print styles */}
-      <style>{`
-        @media print {
-          body * { visibility: hidden; }
-          .resume-preview, .resume-preview * { visibility: visible; }
-          .resume-preview { position: absolute; left: 0; top: 0; width: 100%; }
-        }
-      `}</style>
     </div>
   )
 }
