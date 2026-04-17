@@ -142,7 +142,7 @@ export default function Builder() {
 
         {/* Back to dashboard */}
         <button
-          onClick={() => navigate('/ dashboard')}
+          onClick={() => navigate('/dashboard')}
           className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
         >
           <BackIcon />
